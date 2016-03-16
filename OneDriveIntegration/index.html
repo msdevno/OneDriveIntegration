@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+
+    <script type="text/javascript" src="//ajax.aspnetcdn.com/ajax/jQuery/jquery-2.2.1.min.js"></script>
+    <script type="text/javascript" src="OneDrive.js" id="onedrive-js" client-id="000000004C184E3D, 4c908a9f-117f-44d0-a5db-69323459ecbb"></script>
+
+    <script type="text/javascript">
+
+        function launchOneDriveSaver() {
+            OneDrive._executeUrlUploadOverride = OneDrive._executeUrlUploadOverride || function (saverResponse, folderId, accessToken, uploadType, options) {
+                $.post("/UploadFile.ashx", {
+                    "accessToken": accessToken,
+                    "folderId": folderId
+                }).done(function () {
+                    console.log("Done");
+                    options.success();
+                }).fail(function (e) {
+                    options.error({
+                        // Get the error from response..
+                        errorCode: "500",
+                        message: "Something bad happened"
+                    });
+                });
+            }
+
+            var options = {
+                file: "https://localhost:44300/GetFile.ashx",
+                fileName: "index.html",
+                openInNewWindow: true,
+                success: function () {
+                    console.log("SUCCESS")
+                },
+                progress: function (p) {
+
+                },
+                cancel: function () {
+
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            };
+            OneDrive.save(options);
+        }
+    </script>
+</head>
+<body>
+    <button onclick="javascript:launchOneDriveSaver()">Save to OneDrive</button>
+</body>
+</html>
